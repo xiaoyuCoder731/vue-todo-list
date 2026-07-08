@@ -24,12 +24,7 @@ const loadTodos = () => {
   if (saved) {
     todos.value = JSON.parse(saved);
   } else {
-    todos.value = [
-      { id: 1, text: '学习 Vue3 基础', completed: true, time: '09:00' },
-      { id: 2, text: '完成待办清单项目', completed: false, time: '14:00' },
-      { id: 3, text: '准备答辩演示', completed: false, time: '16:00' }
-    ];
-    saveTodos();
+    todos.value = [];
   }
 };
 
