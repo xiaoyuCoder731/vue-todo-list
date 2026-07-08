@@ -7,5 +7,6 @@ export default defineConfig({
   server: {
     host: true,
     port: 10086
-  }
+  },
+  base: '/vue-todo-list/'
 })

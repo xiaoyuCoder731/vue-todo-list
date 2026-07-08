@@ -1,15 +1,26 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import TodoItem from './TodoItem.vue';
 import TodoForm from './TodoForm.vue';
+
+const props = defineProps({
+  user: {
+    type: Object,
+    required: true
+  }
+});
+
+const emit = defineEmits(['logout']);
 
 const todos = ref([]);
 const filter = ref('all');
 
-const STORAGE_KEY = 'vue-todo-list';
+const STORAGE_KEY_PREFIX = 'vue-todo-list-';
+
+const getStorageKey = () => `${STORAGE_KEY_PREFIX}${props.user.id}`;
 
 const loadTodos = () => {
-  const saved = localStorage.getItem(STORAGE_KEY);
+  const saved = localStorage.getItem(getStorageKey());
   if (saved) {
     todos.value = JSON.parse(saved);
   } else {
@@ -23,12 +34,16 @@ const loadTodos = () => {
 };
 
 const saveTodos = () => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(todos.value));
+  localStorage.setItem(getStorageKey(), JSON.stringify(todos.value));
 };
 
 onMounted(() => {
   loadTodos();
 });
+
+watch(() => props.user, () => {
+  loadTodos();
+}, { immediate: false });
 
 const addTodo = ({ text, time }) => {
   const newTodo = {
@@ -81,6 +96,14 @@ const stats = computed(() => {
 <template>
   <div class="todo-container">
     <div class="header">
+      <div class="user-info">
+        <div class="avatar">👤</div>
+        <div class="user-text">
+          <span class="username">{{ user.username }}</span>
+          <span class="user-id">ID: {{ user.id }}</span>
+        </div>
+        <button class="logout-btn" @click="emit('logout')">退出</button>
+      </div>
       <h1>📝 智能待办清单</h1>
       <p class="subtitle">高效管理你的每一天</p>
     </div>
@@ -152,6 +175,50 @@ const stats = computed(() => {
 .header {
   text-align: center;
   margin-bottom: 30px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.avatar {
+  font-size: 36px;
+}
+
+.user-text {
+  text-align: left;
+}
+
+.username {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+  color: white;
+}
+
+.user-id {
+  display: block;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.logout-btn {
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 107, 107, 0.9);
 }
 
 .header h1 {
