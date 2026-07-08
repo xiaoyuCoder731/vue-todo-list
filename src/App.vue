@@ -3,19 +3,14 @@ import { ref } from 'vue';
 import Auth from './components/Auth.vue';
 import TodoList from './components/TodoList.vue';
 
-const CURRENT_USER_KEY = 'vue-todo-current-user';
-
-const savedUser = localStorage.getItem(CURRENT_USER_KEY);
-const currentUser = ref(savedUser ? JSON.parse(savedUser) : null);
+const currentUser = ref(null);
 
 const handleLogin = (user) => {
   currentUser.value = user;
-  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
 };
 
 const handleLogout = () => {
   currentUser.value = null;
-  localStorage.removeItem(CURRENT_USER_KEY);
 };
 </script>
 
